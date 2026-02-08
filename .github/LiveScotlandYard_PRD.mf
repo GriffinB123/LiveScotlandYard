@@ -1,0 +1,271 @@
+# Project Requirements Document: Live Scotland Yard
+
+
+
+## Document Information
+
+- **Project Name**: Live Scotland Yard
+
+- **Version**: 2.0 (Final)
+
+- **Date**: November 20, 2025
+
+- **Status**: Ready for Implementation
+
+- **Change Summary from 1.x**:
+
+  - Added player profiles & local stats
+
+  - Added AI difficulty tiers (Easy/Medium/Hard)
+
+  - Added handicap system with reveal-frequency slider
+
+  - Added dynamic TV focus zoom + possible-location halo
+
+  - Added iOS controller path preview + pinch/drag gestures
+
+  - Added single-player mode (iOS-only)
+
+  - Consolidated naming: iOS app = “Scotland Yard”, tvOS = “Scotland Yard TV”
+
+  - Web prototype first → Swift port path
+
+
+
+## 1. Introduction
+
+Digital couch-co-op adaptation of Ravensburger’s Scotland Yard for in-person play using:
+
+- Apple TV as the shared board
+
+- iPhones/iPads as private controllers
+
+- Optional single-player mode on iOS only
+
+
+
+## 2. Core Vision
+
+One human or AI Mr. X evades 1–5 human/AI detectives on the classic London map. Detectives cooperate aloud; Mr. X plays in secret. Goal: faithful mechanics + modern polish + family-friendly flexibility.
+
+
+
+## 3. Platforms & Distribution
+
+| Target       | App Name               | Bundle ID Example                  | Required |
+
+|--------------|------------------------|------------------------------------|----------|
+
+| iOS/iPadOS   | Scotland Yard          | com.yourname.scotlandyard          | Yes      |
+
+| tvOS         | Scotland Yard TV       | com.yourname.scotlandyard.tv       | Yes      |
+
+One Xcode project with two targets + shared framework.
+
+
+
+## 4. Supported Player Counts
+
+- Minimum: 1 human (solo mode) or 1 Mr. X + 1 detective
+
+- Maximum: 1 Mr. X + 5 detectives (human or AI)
+
+- Bobbies (AI helpers) auto-fill when <4 detectives
+
+
+
+## 5. Functional Requirements
+
+
+
+### 5.1 Player Profiles & Stats (Local Only)
+
+- On first join: prompt “Enter your name” → stored in Keychain
+
+- Auto-fill on future sessions
+
+- Stats tracked per name:
+
+  - Games played / won (as Mr. X or Detective)
+
+  - Average survival rounds (Mr. X)
+
+  - Capture efficiency
+
+- Post-game leaderboard on TV
+
+
+
+### 5.2 Game Setup (Host on tvOS)
+
+| Setting                  | Options / Values                                  | Default          |
+
+|--------------------------|---------------------------------------------------|------------------|
+
+| Timing Mode              | Individual Timed / Commit Mode / Unlimited        | Individual Timed |
+
+| Turn Time                | 15 / 30 / 45 / 60 / 90 / 120 s                    | 45 s             |
+
+| AI Fallback on Timeout   | Force AI / Wait Forever                           | Force AI         |
+
+| AI Difficulty (per role) | Off / Easy / Medium / Hard                        | Medium           |
+
+| Handicap: Reveal Freq.   | Slider 1–24 (Mr. X surfaces every N turns)        | 5 (bold)         |
+
+| Extra Detective Tickets  | 0 / +2 / +4 per detective                         | 0                |
+
+| Mr. X Ticket Penalty     | 0 / –2 / –4 total tickets                         | 0                |
+
+| Bobbies                  | Auto / Off                                        | Auto             |
+
+
+
+### 5.3 Gameplay Loop
+
+- Standard Scotland Yard rules (24 rounds, surfacing on configured turns, black tickets, double-move tickets)
+
+- Mr. X turn always first, then detectives in any order
+
+- Commit Mode: players tap large “COMMIT” → countdown only starts for last uncommitted player
+
+
+
+### 5.4 AI Behavior
+
+- Easy   → greedy / random legal moves
+
+- Medium → basic prediction (ticket clues, block/evade)
+
+- Hard   → minimax-lite depth 3–4, bluffing
+
+- Runs entirely on-device, <500 ms
+
+
+
+### 5.5 Single-Player Mode (iOS only)
+
+- Launch → “Play Solo”
+
+- Full-screen map + slide-up Mr. X panel or detective tray
+
+- All other roles filled by AI (difficulty choosable)
+
+
+
+## 6. UI/UX Requirements
+
+
+
+### 6.1 Apple TV (Shared Board)
+
+- Vector London map (199 nodes)
+
+- Dynamic Focus Zoom:
+
+  - After each Mr. X move → auto pan/zoom to possible-location halo + detective cluster
+
+  - 3-second smooth spring animation
+
+  - Manual override with Siri Remote swipe/pinch
+
+- Tokens pulse on active turn
+
+- HUD: round counter, next reveal, commit status checks, timer ring
+
+- Subtle haptics/sounds only (soft ding on commit, whoosh on move)
+
+
+
+### 6.2 iOS Controllers
+
+- Private screen per role
+
+- On turn: glowing path previews limited by available tickets
+
+- Double-move preview chains two hops
+
+- Gestures:
+
+  - 1-finger drag → pan
+
+  - 2-finger pinch → zoom 0.5–3× with inertia
+
+  - Double-tap → reset view
+
+- Large “COMMIT” button in Commit Mode
+
+
+
+### 6.3 Accessibility & Polish
+
+- Color-blind line patterns
+
+- VoiceOver labels
+
+- Light haptics package (no annoying sounds)
+
+- Dark-mode friendly
+
+
+
+## 7. Non-Functional Requirements
+
+- MultipeerConnectivity P2P (tvOS = authoritative server)
+
+- <100 ms sync latency
+
+- Full offline operation
+
+- Local storage only (no iCloud, no accounts)
+
+- App size target <150 MB
+
+
+
+## 8. Technical Approach
+
+1. Phase 1 – Web Prototype (HTML/JS/Canvas or React)
+
+   - Validate timing modes, AI, handicaps, commit flow
+
+   - Shareable link for quick playtesting
+
+2. Phase 2 – Port to Swift
+
+   - Core logic from proven open-source repos (MIT licensed Java/Python → Swift structs)
+
+   - Shared framework for GameState, Graph, AI
+
+   - SwiftUI for both targets
+
+3. Phase 3 – Real-device testing → TestFlight → App Store
+
+
+
+## 9. Scope (MVP)
+
+Everything listed above + basic polish.
+
+
+
+## 10. Out of Scope (MVP)
+
+- Online multiplayer
+
+- Custom maps / NYC variant
+
+- In-app purchases
+
+- Cloud sync
+
+- Advanced neural-net AI
+
+
+
+This PRD is now complete and actionable.  
+
+Drop this file into VSCode/Cursor/Claude/Copilot and say “Build this app” — you’ll get a massive head start.
+
+
+
+You’re ready to ship the first true modern Scotland Yard couch experience. Go make it real.
