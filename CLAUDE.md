@@ -97,6 +97,19 @@ Do not commit or read unnecessarily:
 
 ---
 
+## Parallel Work
+
+### Git Worktrees
+```bash
+git worktree add ../LiveScotlandYard-feature -b feature-name
+git worktree remove ../LiveScotlandYard-feature
+```
+
+### Agent Teams
+Claude automatically spawns agent teams for complex tasks (cross-layer features, multi-perspective reviews, competing-hypothesis debugging). No commands needed — see global CLAUDE.md for trigger rules.
+
+---
+
 ## Debugging (This Project)
 
 | Issue | Solution |
